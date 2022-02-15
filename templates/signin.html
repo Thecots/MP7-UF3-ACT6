@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect4 - srcots</title>
+  <link rel="stylesheet" href="./static/img/logo.png">
+  <link rel="stylesheet" href="./static/css/signin.css">
+</head>
+<body>
+  <img src="./static/img/a.jpg" alt="">
+  <main>
+    <section>
+      <form>
+        <h1>Inicia sesión</h1>
+        <div class="text-field" id="username">
+          <input type="text" required autocomplete="off" autofocus minlength="4" maxlength="10"> 
+          <label class="label">Nombre de usuario</label>
+        </div>
+        <div class="btn-box">
+          <button type="submit">Iniciar sesión</button>
+        </div>
+      </fo>
+    </section>
+  </main>
+  <div class="logo">
+    <h1>CONNECT 4</h1>
+    <h1>ONLINE</h1>
+    <h1>V 1.0</h1>
+  </div>
+  <script>
+    document.querySelector('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      window.location.href = '/search?username='+document.querySelector('form input').value
+    })
+  </script>
+</body>
+</html>

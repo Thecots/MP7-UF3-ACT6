@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect4 - srcots</title>
+  <link rel="stylesheet" href="./static/img/logo.png">
+  <link rel="stylesheet" href="./static/css/global.css">
+</head>
+<body>
+  <main class="buscarPartida">
+    <header>
+      <h2>Partida {{id}} - {{title}} </h2>
+      <a style="display: none;" {% if winner %} class="adissabledexit" {%endif%} href="/search?username={{username}}">Salir</a>
+    </header>
+    <div class="tablero">
+      <div class="board">
+        {% for i in tablero %}
+          {% for e in i%}
+            <span class='circle{{e}}'></span>
+          {% endfor %}
+        {% endfor %}
+      </div>
+      {% if title == 'Tu turno'%}
+        <div class='btn pointer'>
+          <a {% if tablero.0.0 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=0">1</a> 
+          <a {% if tablero.0.1 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=1">2</a>
+          <a {% if tablero.0.2 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=2">3</a>
+          <a {% if tablero.0.3 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=3">4</a>
+          <a {% if tablero.0.4 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=4">5</a>
+          <a {% if tablero.0.5 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=5">6</a> 
+          <a {% if tablero.0.6 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=6">7</a>
+        <div>
+      {% else %}
+        <div class='btn'>
+          <a {% if tablero.0.0 == 0 %} class="dissable" {%endif%}>1</a> 
+          <a {% if tablero.0.1 == 0 %} class="dissable" {%endif%}>2</a>
+          <a {% if tablero.0.2 == 0 %} class="dissable" {%endif%}>3</a>
+          <a {% if tablero.0.3 == 0 %} class="dissable" {%endif%}>4</a>
+          <a {% if tablero.0.4 == 0 %} class="dissable" {%endif%}>5</a>
+          <a {% if tablero.0.5 == 0 %} class="dissable" {%endif%}>6</a> 
+          <a {% if tablero.0.6 == 0 %} class="dissable" {%endif%}>7</a>
+        <div>
+      {%endif%}
+    </div>
+    </div>
+  </main>
+  {% if title == 'Esperando movimiento del rival' %}
+  <script>
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  </script>
+  {% endif %}
+</body>
+</html>

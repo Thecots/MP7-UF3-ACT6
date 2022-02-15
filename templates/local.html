@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect4 - srcots</title>
+  <link rel="stylesheet" href="./static/img/logo.png">
+  <link rel="stylesheet" href="./static/css/global.css">
+</head>
+<body>
+  <main class="word__">
+    <header>
+      <h1>Escribe una palabra</h1>
+      <div class="buttons">
+        <a style="display: none;"></a>
+        <a style="display: none;"></a>
+      </div>
+    </header>
+    <section class="word">
+      <form>
+        <div class="text-field">
+            <input id="titulo" required autocomplete="off" name="word" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32) && (event.charCode != 32)" maxlength="10" minlength="4">
+            <label class="label">Palabra (min: 4 letras, max: 10 letras)</label>
+        </div>
+        <div class="btn-box word-btn-box">
+          <input type="submit" value="jugar">
+        </div>
+      </form>
+    </section>
+  </main>
+  
+  <!-- partida -->
+  <main class = "game__">
+    <header id="title_">
+      <h1>Partida vs IA - Tú turno</h1>
+  
+      <div class="buttons">
+        <a style="display: none;"></a>
+        <a style="display: none;"></a>
+      </div>
+      <div class="buttons">
+        <a style="display: none;"></a>
+        <a style="display: none;"></a>
+        <a style="display: none;" id="btn_on__" href="/search?username={{username}}">salir</a>
+      </div>
+    </header>
+    <section class="game">
+      <div class="board">
+         <div class="img">
+          <img src='./static/img/0.png'>
+        </div>
+        <div class="foundedLetters"></div>
+        <div class="keyboard"></div>
+        </div>
+      </div>
+      <div class="info">
+        <div class="hostLives">
+          <h1>TUS VIDAS</h1>
+          <div class="lives">
+          <img src='./static/img/h1.png'>
+          <img src='./static/img/h2.png'>
+          </div>
+        </div>
+        <div class="guestGame">
+          <h1>RIVAL</h1>
+          <div class="guestBoard">
+            <img src='./static/img/0.png'>
+          </div>
+          <div class="guestLetters"><span class='bar'></span>
+          </div>
+          <div class="guestLives">
+            <img src='./static/img/h1.png'>
+  
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="./static/js/local.js"></script>
+  
+</body>
+</html>
+

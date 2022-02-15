@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect4 - srcots</title>
+  <link rel="stylesheet" href="./static/img/logo.png">
+  <link rel="stylesheet" href="./static/css/global.css">
+</head>
+<body>
+  <div class="sessionc">
+    <p>Jugando como: {{ username }}</p>
+    <a href="/" class="cerrarses">cerrar sesión</a>
+  </div>
+  <main>
+    <header>
+      <h1 class="searchH1">Buscando partidas</h1>
+      <div class="buttons">
+        <a href="/local?username={{username}}">jugar vs IA</a>
+        <a href="/create?username={{username}}">crear partida</a>
+      </div>
+    </header>
+    <section class="games">
+      {% if data%}
+        {% for i in data %}
+          <div>
+            <span>
+              <h3>Partida - {{ i.0 }}</h3>
+              <h3>Creada por: {{ i.2}}</h3><h3>-</h3>
+              <h3>{{ i.1}}</h3>
+            </span>
+            <a href="/join?username={{username}}&id={{i.0}}">JUGAR</a>
+          </div>
+        {%endfor%}
+      {% else %}
+        <h1>NO HAY PARTIDAS DISPONIBLES </h1>
+      {% endif %}
+    </section>
+  </main>
+  <script>
+    setTimeout(() => {
+      window.location.reload();
+    },2000)
+  </script>
+</body>
+</html>
