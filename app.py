@@ -10,13 +10,10 @@ app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'ahorcado'
 mysql = MySQL(app)
 
-
-# mira si hay un ganador
-
-
 # iniciar sesión ✓
 @app.route('/')
 def index():
+  print('hola')
   return render_template('signin.html')
 
 # crear partida ✓
@@ -24,7 +21,6 @@ def index():
 def create():
   username = request.args.get('username')
   today = date.today()
-
   cur = mysql.connection.cursor()
   cur.execute('INSERT INTO partides (data, host, torn) VALUES(%s,%s,%s)',(today,username,1))
   mysql.connection.commit()
@@ -34,9 +30,10 @@ def create():
 # buscar partidas ✓
 @app.route('/search')
 def search():
+  print('hola')
   if(request.args.get('username') == None):
     return render_template('signin.html')
-  
+
   cur = mysql.connection.cursor()
   cur.execute('SELECT * FROM partides WHERE ISNULL(guest)')
   data = cur.fetchall()
@@ -75,134 +72,242 @@ def join():
   cur = mysql.connection.cursor()
   cur.execute('UPDATE partides set guest=%s WHERE id_partida=%s',(request.args.get('username'),request.args.get('id')))
   mysql.connection.commit()
-
   cur.close()
   return redirect(url_for('word', username = request.args.get('username'), id = request.args.get('id')))
 
-#palabra
+# escojer palabra ✓
 @app.route('/word')
-def join():
+def word():
   if(request.args.get('username') == None):
     return render_template('signin.html')
-  cur = mysql.connection.cursor()
-  cur.execute('UPDATE partides set guest=%s WHERE id_partida=%s',(request.args.get('username'),request.args.get('id')))
-  mysql.connection.commit()
 
-  cur.close()
-  return redirect(url_for('game', username = request.args.get('username'), id = request.args.get('id')))
-
-
-# partida
-@app.route('/game')
-def game():
-  if(request.args.get('username') == None):
-    return render_template('signin.html')
-  username = request.args.get('username')
-  id = request.args.get('id')
-  title = 'Tu turno'
-  winner = False
-  tablero = [
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0],
-  ]
-
-  # turno 
   cur = mysql.connection.cursor()
   cur.execute('SELECT * FROM partides WHERE id_partida={0}'.format(request.args.get('id')))
   data = cur.fetchall()
-  if (data[0][2] == request.args.get('username')):
-    #host
-    if(data[0][4] == 1):
-      title = 'Tu turno'
+  
+  state = False
+  i = 0
+
+  if(data[0][2] == request.args.get('username')):
+    #jugador 1
+    if(data[0][4] == None):
+        state = False
     else:
-      title = 'Esperando movimiento del rival'
+      i += 1
+      state = True
   else:
-    #guest
-    if(data[0][4] != 1):
-      title = 'Tu turno'
+    #jugador 2
+    if(data[0][5] == None):
+        state = False
     else:
-      title = 'Esperando movimiento del rival'
+      i += 1
+      state = True
   cur.close()
 
-# montar tablero
+  print(i)
+  if(data[0][5] != None and data[0][4] != None):
+    return redirect(url_for('partida', username = request.args.get('username'), id = request.args.get('id')))
+  else:
+    return render_template('word.html',
+    username = request.args.get('username'),
+    id = request.args.get('id'),
+    state = state)
+  
+@app.route('/setWordSave')
+def setWordSave():
   cur = mysql.connection.cursor()
-  cur.execute('SELECT * FROM moviments WHERE id_partida={0}'.format(request.args.get('id')))
-  data2 = cur.fetchall()
-  if(data2):
-    for i in data2:
-      q = 5
-      while q >= 0:
-        if(tablero[q][i[2]] == 0):
-          tablero[q][i[2]] = i[1]
-          q = -99
-        q = q-1
+  cur.execute('SELECT * FROM partides WHERE id_partida={0}'.format(request.args.get('id')))
+  data = cur.fetchall()
+  if(data[0][2] == request.args.get('username')):
+    #jugador 1
+    cur.execute('UPDATE partides set hostWord=%s WHERE id_partida=%s',(request.args.get('word').lower(),request.args.get('id')))
+    mysql.connection.commit()
+    cur.close()
+  else:
+    #jugador 2
+    cur.execute('UPDATE partides set guestWord=%s WHERE id_partida=%s',(request.args.get('word').lower(),request.args.get('id')))
+    mysql.connection.commit()
+    cur.close()
   cur.close()
+  return redirect(url_for('word', username = request.args.get('username'), id = request.args.get('id')))
 
-  # checkear ganador
-  w = checkWinner(tablero)
-  if(w):
-    if data[0][2] == request.args.get('username'):
-      #host
-      if(w == 1):
-        title = 'Has ganado!'
+def vidas(p,l):
+  arr = []
+  template = ''
+
+  for i in range(len(p)):
+    arr.append(p[i])
+
+  v = 7
+
+  if(l != None):
+    for i in range(len(l)):
+      if(l[i] in arr):
+        v = v
       else:
-        title = 'Has perdido'
-      winner = True
+        v -= 1
+  return v
+
+def palabras(p,l):
+  arr = []
+  template = ''
+  if(l != None):
+    for i in range(len(l)):
+      arr.append(l[i])
+
+  for i in range(len(p)):
+    if(p[i] in arr):
+      template += '<span>'+p[i]+'</span>'
     else:
-      #guest
-      if(w != 1):
-        title = 'Has ganado!'
-      else:
-        title = 'Has perdido'
-      winner = True
+      template += '<span class="bar"></span>'
 
+  return template
 
+def palabraswin(p,l):
+  arr = []
+  word = 0
+  if(l != None):
+    for i in range(len(l)):
+      arr.append(l[i])
 
-  return render_template('game.html',
-  username = username,
-  id = id,
-  title = title,
-  tablero = tablero,
-  winner = winner
-  )
+  for i in range(len(p)):
+    if(p[i] in arr):
+      word += 1
+  
 
+  if(word == len(p)):
+    return True
+  return False
 
-# mover
+def winner(p2,l1,p1,l2):
+
+  if(vidas(p2,l1) == 0):
+    return 2
+  
+  if(vidas(p1,l2) == 0):
+    return 1
+
+  if(palabraswin(p2,l1)):
+    return 1
+
+  if(palabraswin(p1,l2)):
+    return 2  
+
+  return 0
+
+# partida ✓
+@app.route('/partida')
+def partida():
+  if(request.args.get('username') == None):
+    return render_template('signin.html')
+
+  cur = mysql.connection.cursor()
+  cur.execute('SELECT * FROM partides WHERE id_partida={0}'.format(request.args.get('id')))
+  data = cur.fetchall()
+
+  win = ''
+  hp1 = 0
+  hp2 = 0
+  turno = 1
+
+  if(data[0][2] == request.args.get('username')):
+    #jugador 1
+    if(data[0][8] == '1'):
+      #turno host
+      turno = 1
+    else:
+      #turno guest
+      turno = 0
+
+    arr = []
+    pal = data[0][5]
+
+    if(data[0][6] != None):
+      for i in range(len(data[0][6])):
+        arr.append(data[0][6][i])
+
+    if(winner(data[0][5],data[0][6],data[0][4],data[0][7]) == 1):
+      win = 'Has ganado!'
+      turno = 3
+    elif(winner(data[0][5],data[0][6],data[0][4],data[0][7]) == 2):
+      win = 'Has perdido'
+      turno = 3
+
+    cur.close()
+    return render_template('game.html',
+    username = request.args.get('username'),
+    id = request.args.get('id'),
+    turno = turno,
+    win = win,
+    hp1 = vidas(data[0][5],data[0][6]),
+    hp2 = vidas(data[0][4],data[0][7]),
+    p1 = palabras(data[0][5],data[0][6]),
+    p2 = palabras(data[0][4],data[0][7]),
+    arr = arr,
+    pal = pal
+    )
+    
+  else:
+    #jugador 2
+    if(data[0][8] == '1'):
+      #turno host
+      turno = 0
+    else:
+      #turno guest
+      turno = 1
+
+    arr = []
+    pal = data[0][4]
+    
+    if(winner(data[0][5],data[0][6],data[0][4],data[0][7]) == 1):
+      win = 'Has perdido'
+      turno = 3
+    elif(winner(data[0][5],data[0][6],data[0][4],data[0][7]) == 2):
+      win = 'Has ganado!'
+      turno = 3
+
+    if(data[0][7] != None):
+      for i in range(len(data[0][7])):
+        arr.append(data[0][7][i])
+
+    cur.close()
+    return render_template('game.html',
+      username = request.args.get('username'),
+      id = request.args.get('id'),
+      turno = turno,
+      win = win,
+      hp1 = vidas(data[0][4],data[0][7]),
+      hp2 = vidas(data[0][5],data[0][6]),
+      p1 = palabras(data[0][4],data[0][7]),
+      p2 = palabras(data[0][5],data[0][6]),
+      arr = arr,
+      pal = pal
+    )
+
+# añadir letra
 @app.route('/move')
 def move():
   if(request.args.get('username') == None):
     return render_template('signin.html')
 
-  # jugador
   cur = mysql.connection.cursor()
   cur.execute('SELECT * FROM partides WHERE id_partida={0}'.format(request.args.get('id')))
   data = cur.fetchall()
-  
-  player = ''
-  if (data[0][2] == request.args.get('username')):
-    #host
-    player = 1
+
+  if(data[0][2] == request.args.get('username')):
+    #jugador 1
+    cur.execute('UPDATE partides set hostLetters=%s , torn=2  WHERE id_partida=%s',(('' if data[0][6] == None else data[0][6])+request.args.get('letter'),request.args.get('id')))
+    mysql.connection.commit()
+    cur.close()
   else:
-    #guest
-    player = 2
-
-  # cambiar turno
-  cur = mysql.connection.cursor()
-  cur.execute('UPDATE  partides SET torn = IF(torn=1,2,1)  WHERE id_partida={0}'.format(request.args.get('id')))
-  mysql.connection.commit()
+    #jugador 2
+    cur.execute('UPDATE partides set guestLetters=%s , torn=1 WHERE id_partida=%s',(('' if data[0][7] == None else data[0][7])+request.args.get('letter'),request.args.get('id')))
+    mysql.connection.commit()
+    cur.close()
   cur.close()
 
-  # insertar movimento
-  cur = mysql.connection.cursor()
-  cur.execute('INSERT INTO moviments (jugador, columna_moviment, id_partida) VALUES (%s,%s,%s)',(player,request.args.get('move'),request.args.get('id')))
-  mysql.connection.commit()
-  cur.close()
-  return redirect(url_for('game', username = request.args.get('username'), id = request.args.get('id')))
 
+  return redirect(url_for('partida', username = request.args.get('username'), id = request.args.get('id')))
 
 
 # partida vs IA
@@ -210,7 +315,6 @@ def move():
 def local():
   if(request.args.get('username') == None):
     return render_template('signin.html')
-  
   return render_template('local.html', username = request.args.get('username'))
 
 
