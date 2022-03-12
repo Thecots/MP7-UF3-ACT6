@@ -11,5 +11,5 @@ CREATE TABLE partides(
   guestWord VARCHAR(10),
   hostLetters VARCHAR(100),
   guestLetters VARCHAR(100),
-  torn VARCHAR(10),
+  torn VARCHAR(10)
 );

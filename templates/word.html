@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ahorcado - srcots</title>
+  <link rel="stylesheet" href="./static/img/logo.png">
+  <link rel="stylesheet" href="./static/css/global.css">
+</head>
+<body>
+  {% if state%}
+  <main>
+    <header>
+    <h1 class="searchH1">Esperando palabra del rival</h1>
+    </header>
+  </main>
+    <script>
+      setTimeout(() => {
+        window.location.reload();
+      },500);
+    </script>
+  {% else %}
+  <main>
+    <header>
+    <h1>Escribe una palabra</h1>
+    </header>
+    <section class="word">
+      <form action="/setWordSave">
+        <div class="text-field">
+            <input id="titulo" required autocomplete="off" name="word" onkeypress="return (event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || (event.charCode==32) && (event.charCode != 32)" maxlength="10" minlength="4">
+            <label class="label">Palabra (min: 4 letras, max: 10 letras)</label>
+        </div>
+        <input hidden type="text" name="id" value="{{id}}"> 
+        <input hidden type="text" name="username" value="{{username}}"> 
+        <div class="btn-box word-btn-box">
+          <input type="submit" value="jugar">
+        </div>
+      </form>
+    </section>
+  </main>
+  {%endif%}
+</body>
+</html>

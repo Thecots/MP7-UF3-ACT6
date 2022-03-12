@@ -4,54 +4,144 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Connect4 - srcots</title>
+  <title>Ahorcado - srcots</title>
   <link rel="stylesheet" href="./static/img/logo.png">
   <link rel="stylesheet" href="./static/css/global.css">
 </head>
 <body>
-  <main class="buscarPartida">
+  <main>
     <header>
-      <h2>Partida {{id}} - {{title}} </h2>
-      <a style="display: none;" {% if winner %} class="adissabledexit" {%endif%} href="/search?username={{username}}">Salir</a>
-    </header>
-    <div class="tablero">
-      <div class="board">
-        {% for i in tablero %}
-          {% for e in i%}
-            <span class='circle{{e}}'></span>
-          {% endfor %}
-        {% endfor %}
-      </div>
-      {% if title == 'Tu turno'%}
-        <div class='btn pointer'>
-          <a {% if tablero.0.0 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=0">1</a> 
-          <a {% if tablero.0.1 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=1">2</a>
-          <a {% if tablero.0.2 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=2">3</a>
-          <a {% if tablero.0.3 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=3">4</a>
-          <a {% if tablero.0.4 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=4">5</a>
-          <a {% if tablero.0.5 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=5">6</a> 
-          <a {% if tablero.0.6 != 0 %} class="dissable" {%endif%} href="/move?username={{username}}&id={{id}}&move=6">7</a>
-        <div>
+      {% if turno == 1 %}
+        <h1>Tú turno</h1>
+      {% elif turno == 0 %}
+        <h1 class="searchH1">Turno del rival</h1>
       {% else %}
-        <div class='btn'>
-          <a {% if tablero.0.0 == 0 %} class="dissable" {%endif%}>1</a> 
-          <a {% if tablero.0.1 == 0 %} class="dissable" {%endif%}>2</a>
-          <a {% if tablero.0.2 == 0 %} class="dissable" {%endif%}>3</a>
-          <a {% if tablero.0.3 == 0 %} class="dissable" {%endif%}>4</a>
-          <a {% if tablero.0.4 == 0 %} class="dissable" {%endif%}>5</a>
-          <a {% if tablero.0.5 == 0 %} class="dissable" {%endif%}>6</a> 
-          <a {% if tablero.0.6 == 0 %} class="dissable" {%endif%}>7</a>
-        <div>
+        <h1>{{win}}</h1>
+        <div class="buttons">
+          <a style="display: none;"></a>
+          <a style="display: none;"></a>
+          <a href="/search?username={{username}}">salir</a>
+        </div>
       {%endif%}
-    </div>
-    </div>
+    </header>
+    <section class="game">
+      <div class="board">
+        <div class="img">
+          <img src='./static/img/{{7-hp1}}.png'>
+        </div>
+        <div class="foundedLetters">
+          {{p1|safe}}
+        </div>
+        <div class="keyboard">
+          {% if turno == 1 %}
+            <div>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=q'" class="{{ 'disabled' if 'q' in arr else '' }}">Q</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=w'" class="{{ 'disabled' if 'w' in arr else '' }}">W</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=e'" class="{{ 'disabled' if 'e' in arr else '' }}">E</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=r'" class="{{ 'disabled' if 'r' in arr else '' }}">R</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=t'" class="{{ 'disabled' if 't' in arr else '' }}">T</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=y'" class="{{ 'disabled' if 'y' in arr else '' }}">Y</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=u'" class="{{ 'disabled' if 'u' in arr else '' }}">U</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=i'" class="{{ 'disabled' if 'i' in arr else '' }}">I</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=o'" class="{{ 'disabled' if 'o' in arr else '' }}">O</button>
+              <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=p'" class="{{ 'disabled' if 'p' in arr else '' }}">P</button>
+            </div>
+            <div>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=a'" class="{{ 'disabled' if 'a' in arr else '' }}">A</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=s'" class="{{ 'disabled' if 's' in arr else '' }}">S</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=d'" class="{{ 'disabled' if 'd' in arr else '' }}">D</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=f'" class="{{ 'disabled' if 'f' in arr else '' }}">F</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=g'" class="{{ 'disabled' if 'g' in arr else '' }}">G</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=h'" class="{{ 'disabled' if 'h' in arr else '' }}">H</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=j'" class="{{ 'disabled' if 'j' in arr else '' }}">J</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=k'" class="{{ 'disabled' if 'k' in arr else '' }}">K</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=l'" class="{{ 'disabled' if 'l' in arr else '' }}">L</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=ñ'" class="{{ 'disabled' if 'ñ' in arr else '' }}">Ñ</button>
+            </div>
+            <div>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=z'" class="{{ 'disabled' if 'z' in arr else '' }}">Z</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=x'" class="{{ 'disabled' if 'x' in arr else '' }}">X</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=c'" class="{{ 'disabled' if 'c' in arr else '' }}">C</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=v'" class="{{ 'disabled' if 'v' in arr else '' }}">V</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=b'" class="{{ 'disabled' if 'b' in arr else '' }}">B</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=n'" class="{{ 'disabled' if 'n' in arr else '' }}">N</button>
+                <button onclick="window.location.href='/move?id={{id}}&username={{username}}&letter=m'" class="{{ 'disabled' if 'm' in arr else '' }}">M</button>
+            </div>
+          {% else %}
+            <div>
+                <button class="disabled">Q</button>
+                <button class="disabled">W</button>
+                <button class="disabled">E</button>
+                <button class="disabled">R</button>
+                <button class="disabled">T</button>
+                <button class="disabled">Y</button>
+                <button class="disabled">U</button>
+                <button class="disabled">I</button>
+                <button class="disabled">O</button>
+                <button class="disabled">P</button>
+            </div>
+            <div>
+                <button class="disabled">A</button>
+                <button class="disabled">S</button>
+                <button class="disabled">D</button>
+                <button class="disabled">F</button>
+                <button class="disabled">G</button>
+                <button class="disabled">H</button>
+                <button class="disabled">J</button>
+                <button class="disabled">K</button>
+                <button class="disabled">L</button>
+                <button class="disabled">Ñ</button>
+            </div>
+            <div>
+                <button class="disabled">Z</button>
+                <button class="disabled">X</button>
+                <button class="disabled">C</button>
+                <button class="disabled">V</button>
+                <button class="disabled">B</button>
+                <button class="disabled">N</button>
+                <button class="disabled">M</button>
+            </div>
+          {% endif%}
+        </div>
+      </div>
+      <div class="info">
+        <div class="hostLives">
+          <h1>TUS VIDAS</h1>
+          <div class="lives">
+            {% for i in range(hp1) %}
+              <img src='./static/img/h1.png'>
+            {% endfor %}
+            {% for i in range(7- hp1) %}
+              <img src='./static/img/h2.png'>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="guestGame">
+          <h1>RIVAL</h1>
+          <div class="guestBoard">
+            <img src='./static/img/{{7-hp2}}.png'>
+          </div>
+          <div class="guestLetters">
+            {{p2|safe}}
+          </div>
+          <div class="guestLives">
+            {% for i in range(hp2) %}
+              <img src='./static/img/h1.png'>
+            {% endfor %}
+            {% for i in range(7 - hp2) %}
+              <img src='./static/img/h2.png'>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
-  {% if title == 'Esperando movimiento del rival' %}
+  {% if turno == 0 %}
   <script>
     setTimeout(() => {
-      window.location.reload();
-    }, 1000);
+    window.location.reload();
+  },1000); 
   </script>
-  {% endif %}
+  {%endif%}
 </body>
 </html>
